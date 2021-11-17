@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ArrayListOperations implements ListOperations{
     public List<Object> dataList = new ArrayList<>();
+    private final Object lock = new Object();
 
     @Override
     public void addElementThreadUnsafe(Object element) {
@@ -20,7 +21,7 @@ public class ArrayListOperations implements ListOperations{
 
     @Override
     public void addElementThreadSafe(Object element) {
-        synchronized (this) {
+        synchronized (this.lock) {
             this.dataList.add(element);
         }
     }

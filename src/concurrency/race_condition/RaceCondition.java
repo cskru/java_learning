@@ -3,6 +3,10 @@ package concurrency.race_condition;
 import concurrency.race_condition.list.ArrayListOperations;
 import concurrency.race_condition.list.ListOperations;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 public class RaceCondition {
     public static void main(String[] args) {
         try {
@@ -14,17 +18,22 @@ public class RaceCondition {
 
     public static void raceConditionArrayList() throws InterruptedException {
         ListOperations list = new ArrayListOperations();
-        int numOfThreads = 10;
+        int numOfThreads = 100;
         int numOfElementsPerThread = 100;
+
+        var threadPool = Executors.newFixedThreadPool(numOfThreads);
 
         // Simulate Race Condition
         for(int i = 0; i < numOfThreads; i++) {
-            new Thread(() -> {
+            threadPool.submit(() -> {
                 for(int j = 0; j < numOfElementsPerThread; j++) {
                     list.addElementThreadUnsafe(j);
                 }
-            }).start();
+            });
         }
+        threadPool.shutdown();
+        threadPool.awaitTermination(24L, TimeUnit.HOURS);
+
 
         System.out.println("====Thread Unsafe====");
         System.out.println("Expected Final size: "+(numOfThreads * numOfElementsPerThread));
@@ -34,15 +43,16 @@ public class RaceCondition {
 
         // Solve it with Synchronized keyword
         list.clear();
+        threadPool = Executors.newFixedThreadPool(numOfThreads);
         for(int i = 0; i < numOfThreads; i++) {
-            Thread t = new Thread(() -> {
+            threadPool.submit(() -> {
                 for(int j = 0; j < numOfElementsPerThread; j++) {
                     list.addElementThreadSafe(j);
                 }
             });
-            t.join();
-            t.start();
         }
+        threadPool.shutdown();
+        threadPool.awaitTermination(24L, TimeUnit.HOURS);
 
         System.out.println("====Thread Safe====");
         System.out.println("Expected Final size: "+(numOfThreads * numOfElementsPerThread));
