@@ -1,11 +1,9 @@
 package concurrency.race_condition.list;
 
 public interface ListOperations {
-    void addElementThreadUnsafe(Object element);
-    void deleteElementThreadUnsafe(int index);
+    void add(Object element);
 
-    void addElementThreadSafe(Object element);
-    void deleteElementThreadSafe(int index);
+    void delete(int index);
 
     void clear();
 

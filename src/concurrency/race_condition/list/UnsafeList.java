@@ -3,34 +3,19 @@ package concurrency.race_condition.list;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrayListOperations implements ListOperations{
-    public List<Object> dataList = new ArrayList<>();
-    private final Object lock = new Object();
+public class UnsafeList implements ListOperations{
+    private List<Object> dataList = new ArrayList<>();
 
     @Override
-    public void addElementThreadUnsafe(Object element) {
+    public void add(Object element) {
         this.dataList.add(element);
         //System.out.println("Added "+element+" to dataList");
     }
 
     @Override
-    public void deleteElementThreadUnsafe(int index) {
+    public void delete(int index) {
         this.dataList.remove(index);
         //System.out.println("Removed element at index "+index+" from dataList");
-    }
-
-    @Override
-    public void addElementThreadSafe(Object element) {
-        synchronized (this.lock) {
-            this.dataList.add(element);
-        }
-    }
-
-    @Override
-    public void deleteElementThreadSafe(int index) {
-        synchronized (this) {
-            this.dataList.remove(index);
-        }
     }
 
     @Override
